@@ -4,7 +4,7 @@ import numpy as np
 import datetime as dt
 from numpy import newaxis
 from core.utils import Timer
-from keras.layers import Dense, Activation, Dropout, LSTM
+from keras.layers import Dense, Activation, Dropout, LSTM, Flatten
 from keras.models import Sequential, load_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
@@ -30,10 +30,18 @@ class Model():
 			input_timesteps = layer['input_timesteps'] if 'input_timesteps' in layer else None
 			input_dim = layer['input_dim'] if 'input_dim' in layer else None
 
+			if layer['type'] == 'dense_input':
+				self.model.add(Dense(neurons, input_shape=(input_timesteps, input_dim)))
+				self.model.add(Activation(activation))
+
 			if layer['type'] == 'dense':
-				self.model.add(Dense(neurons, activation=activation))
+				self.model.add(Flatten())
+				self.model.add(Dense(neurons))
+				self.model.add(Activation(activation))
+
 			if layer['type'] == 'lstm':
 				self.model.add(LSTM(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq))
+
 			if layer['type'] == 'dropout':
 				self.model.add(Dropout(dropout_rate))
 
@@ -90,7 +98,7 @@ class Model():
 		#Predict each timestep given the last sequence of true data, in effect only predicting 1 step ahead each time
 		print('[Model] Predicting Point-by-Point...')
 		predicted = self.model.predict(data)
-		predicted = np.reshape(predicted, (predicted.size,))
+		# predicted = np.reshape(predicted, (predicted.size,))
 		return predicted
 
 	def predict_sequences_multiple(self, data, window_size, prediction_len):
