@@ -5,6 +5,8 @@ import datetime as dt
 from numpy import newaxis
 from core.utils import Timer
 from keras.layers import Dense, Activation, Dropout, LSTM, Flatten
+from keras.layers import BatchNormalization
+# from keras_layer_normalization import LayerNormalization
 from keras.models import Sequential, load_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
@@ -32,12 +34,16 @@ class Model():
 
 			if layer['type'] == 'dense_input':
 				self.model.add(Dense(neurons, input_shape=(input_timesteps, input_dim)))
+				self.model.add(BatchNormalization())
 				self.model.add(Activation(activation))
-
+# 
+				
 			if layer['type'] == 'dense':
 				self.model.add(Flatten())
 				self.model.add(Dense(neurons))
+				# self.model.add(BatchNormalization())
 				self.model.add(Activation(activation))
+				# self.model.add(LayerNormalization())
 
 			if layer['type'] == 'lstm':
 				self.model.add(LSTM(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq))

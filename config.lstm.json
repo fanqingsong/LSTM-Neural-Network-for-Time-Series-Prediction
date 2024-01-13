@@ -2,15 +2,18 @@
 	"data": {
 		"filename": "sp500.csv",
 		"columns": [
+			"Open",
+			"High",
+			"Low",
 			"Close",
 			"Volume"
 		],
-		"sequence_length": 10,
+		"sequence_length": 4,
 		"train_test_split": 0.85,
 		"normalise": false
 	},
 	"training": {
-		"epochs": 16,
+		"epochs": 100,
 		"batch_size": 32
 	},
 	"model": {
@@ -20,9 +23,9 @@
 		"layers": [
 			{
 				"type": "lstm",
-				"neurons": 8,
-				"input_timesteps": 9,
-				"input_dim": 2,
+				"neurons": 10,
+				"input_timesteps": 3,
+				"input_dim": 5,
 				"return_seq": true
 			},
 			{
